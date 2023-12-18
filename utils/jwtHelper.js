@@ -24,7 +24,7 @@ const generateRefreshToken = (id) => {
 // Logic tạo mã xác thực của bạn ở đây
 const generateVerificationCode = () => {
   const createdAt = new Date();
-  const expiresIn = 2 * 60 * 1000;
+  const expiresIn = 5 * 60 * 1000;
   const expirationTime = createdAt.getTime() + expiresIn;
 
   return {
