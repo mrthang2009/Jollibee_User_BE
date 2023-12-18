@@ -87,7 +87,7 @@ module.exports = {
       storedVerificationCode = verificationCode;
       console.log("««««« storedVerificationCode »»»»»", storedVerificationCode);
       // Gửi mã xác thực qua email
-      await sendVerificationEmail(email, verificationCode);
+      await sendVerificationEmail(email, verificationCode.code);
       return res.send({
         message: "The authentication code has been sent to gmail successfully",
         payload: verificationCode,
