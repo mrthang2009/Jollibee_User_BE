@@ -26,7 +26,7 @@ const generateVerificationCode = () => {
   const createdAt = new Date();
   const expiresIn = 10 * 60 * 1000; // 10 phút tính bằng milliseconds
   const expirationTime = createdAt.getTime() + expiresIn;
-  
+
   return {
     code: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
     createdAt,
@@ -34,7 +34,6 @@ const generateVerificationCode = () => {
     expirationTime,
   };
 };
-
 
 const sendVerificationEmail = async (email, verificationCode) => {
   try {

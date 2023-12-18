@@ -105,11 +105,24 @@ module.exports = {
         req.body;
       console.log("««««« storedVerificationCode »»»»»", storedVerificationCode);
       console.log("««««« enteredCode »»»»»", enteredCode);
-      if (storedVerificationCode == undefined) {
-        return res.status(400).json({ message: "Mã xác thực hết hiệu lực" });
+
+      // Kiểm tra xem có mã xác thực nào được lưu trữ không
+      if (!storedVerificationCode) {
+        return res.status(400).json({ message: "Mã xác thực không tồn tại" });
       }
-      if (enteredCode != storedVerificationCode) {
-        return res.status(400).json({ message: "Mã xác thực không hợp lệ" });
+
+      // Kiểm tra xem mã xác thực có hết hạn hay không
+      const currentTime = new Date().getTime();
+      const expirationTime =
+        storedVerificationCode.createdAt.getTime() +
+        storedVerificationCode.expiresIn;
+      if (currentTime > expirationTime) {
+        return res.status(400).json({ message: "Mã xác thực đã hết hạn" });
+      }
+
+      // Kiểm tra xem mã xác thực có đúng không
+      if (enteredCode != storedVerificationCode.code) {
+        return res.status(400).json({ message: "Mã xác thực không đúng" });
       } else {
         const newCustomer = new Customer({
           firstName,
