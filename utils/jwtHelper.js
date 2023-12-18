@@ -23,9 +23,18 @@ const generateRefreshToken = (id) => {
 
 // Logic tạo mã xác thực của bạn ở đây
 const generateVerificationCode = () => {
-  const expiresIn = "10m"; // Mã xác thực hết hạn sau 10 phút
-  return Math.floor(Math.random() * (999999 - 100000 + 1) + 100000);
+  const createdAt = new Date();
+  const expiresIn = 10 * 60 * 1000; // 10 phút tính bằng milliseconds
+  const expirationTime = createdAt.getTime() + expiresIn;
+  
+  return {
+    code: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
+    createdAt,
+    expiresIn,
+    expirationTime,
+  };
 };
+
 
 const sendVerificationEmail = async (email, verificationCode) => {
   try {
@@ -36,12 +45,20 @@ const sendVerificationEmail = async (email, verificationCode) => {
         pass: "pnnj uhco dqjd hinx", // Mật khẩu ứng dụng của bạn
       },
     });
+    // Tính thời gian hiệu lực của mã xác thực (10 phút)
+    const expiresInMinutes = 10;
+
+    // Tạo đoạn mã HTML cho email
+    const emailHTML = `
+      <p>Mã xác thực của bạn là: <strong>${verificationCode}</strong></p>
+      <p>Mã xác thực này có hiệu lực trong vòng ${expiresInMinutes} phút.</p>
+    `;
 
     const mailOptions = {
       from: "vothang226@gmail.com", // Địa chỉ email người gửi
       to: email, // Địa chỉ email người nhận
       subject: "Xác thực địa chỉ email của bạn vào JOLLIBEE FAKE",
-      text: `Mã xác thực của bạn là: ${verificationCode}`,
+      html: emailHTML, // Sử dụng HTML cho nội dung email
     };
     await transporter.sendMail(mailOptions);
   } catch (error) {

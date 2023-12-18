@@ -85,6 +85,7 @@ module.exports = {
       }
       const verificationCode = generateVerificationCode();
       storedVerificationCode = verificationCode;
+      console.log("««««« storedVerificationCode »»»»»", storedVerificationCode);
       // Gửi mã xác thực qua email
       await sendVerificationEmail(email, verificationCode);
       return res.send({
@@ -102,7 +103,12 @@ module.exports = {
     try {
       const { firstName, lastName, email, phoneNumber, password, enteredCode } =
         req.body;
-      if (enteredCode !== storedVerificationCode) {
+      console.log("««««« storedVerificationCode »»»»»", storedVerificationCode);
+      console.log("««««« enteredCode »»»»»", enteredCode);
+      if (storedVerificationCode == undefined) {
+        return res.status(400).json({ message: "Mã xác thực hết hiệu lực" });
+      }
+      if (enteredCode != storedVerificationCode) {
         return res.status(400).json({ message: "Mã xác thực không hợp lệ" });
       } else {
         const newCustomer = new Customer({
@@ -111,7 +117,6 @@ module.exports = {
           email,
           phoneNumber,
           password,
-          birthday,
           avatarId: null,
         });
         const result = await newCustomer.save();
@@ -126,10 +131,10 @@ module.exports = {
           .json({ message: "Tạo tài khoản thành công", payload: result });
       }
     } catch (err) {
-      console.error("Error during verification:", error);
+      console.error("Error during verification:", err);
       return res
         .status(500)
-        .json({ message: "Tạo tài khoản thất bại", error: error });
+        .json({ message: "Tạo tài khoản thất bại", error: err });
     }
   },
   getMe: async (req, res, next) => {
