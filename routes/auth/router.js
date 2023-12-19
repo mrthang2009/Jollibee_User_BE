@@ -4,9 +4,13 @@ const router = express.Router();
 
 const { validateSchema } = require("../../utils");
 
-const { loginSchema, registerSchema, verifySchema } = require("./validation");
+const {
+  loginSchema,
+  registerSchema,
+  sendCodeSchema,
+} = require("./validation");
 
-const { login, register,verify, getMe } = require("./controller");
+const { login, register, getMe, sendCode } = require("./controller");
 
 router
   .route("/login")
@@ -15,9 +19,8 @@ router
     passport.authenticate("local", { session: false }),
     login
   );
-
+router.route("/send-code").post(validateSchema(sendCodeSchema), sendCode);
 router.route("/register").post(validateSchema(registerSchema), register);
-router.route("/verify").post(validateSchema(verifySchema), verify);
 
 router
   .route("/profile")

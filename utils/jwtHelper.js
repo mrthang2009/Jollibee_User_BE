@@ -45,7 +45,7 @@ const sendVerificationEmail = async (email, verificationCode) => {
       },
     });
     // Tính thời gian hiệu lực của mã xác thực (10 phút)
-    const expiresInMinutes = 10;
+    const expiresInMinutes = 5;
 
     // Tạo đoạn mã HTML cho email
     const emailHTML = `

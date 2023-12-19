@@ -61,50 +61,10 @@ module.exports = {
         .json({ message: "Login of user failed", error: err });
     }
   },
-
   register: async (req, res, next) => {
-    try {
-      const { firstName, lastName, email, phoneNumber, password } = req.body;
-      const getEmailExits = Customer.findOne({ email });
-      const getPhoneExits = Customer.findOne({ phoneNumber });
-
-      const [foundEmail, foundPhoneNumber] = await Promise.all([
-        getEmailExits,
-        getPhoneExits,
-      ]);
-
-      const errors = [];
-      if (foundEmail) errors.push("Email đã tồn tại");
-      if (foundPhoneNumber) errors.push("Số điện thoại đã tồn tại");
-
-      if (errors.length > 0) {
-        return res.status(404).json({
-          message: "Register is not valid",
-          error: `${errors}`,
-        });
-      }
-      const verificationCode = generateVerificationCode();
-      storedVerificationCode = verificationCode;
-      console.log("««««« storedVerificationCode »»»»»", storedVerificationCode);
-      // Gửi mã xác thực qua email
-      await sendVerificationEmail(email, verificationCode.code);
-      return res.send({
-        message: "The authentication code has been sent to gmail successfully",
-        payload: verificationCode,
-      });
-    } catch (err) {
-      console.error("Error during verification:", error);
-      return res
-        .status(500)
-        .json({ message: "Tạo tài khoản thất bại", error: error });
-    }
-  },
-  verify: async (req, res, next) => {
     try {
       const { firstName, lastName, email, phoneNumber, password, enteredCode } =
         req.body;
-      console.log("««««« storedVerificationCode »»»»»", storedVerificationCode);
-      console.log("««««« enteredCode »»»»»", enteredCode);
 
       // Kiểm tra xem có mã xác thực nào được lưu trữ không
       if (!storedVerificationCode) {
@@ -151,6 +111,50 @@ module.exports = {
         .json({ message: "Tạo tài khoản thất bại", error: err });
     }
   },
+  sendCode: async (req, res, next) => {
+    try {
+      const { email, phoneNumber, forgotPassword } = req.body;
+
+      const getEmailExits = Customer.findOne({ email });
+      const getPhoneExits = Customer.findOne({ phoneNumber });
+
+      const [foundEmail, foundPhoneNumber] = await Promise.all([
+        getEmailExits,
+        getPhoneExits,
+      ]);
+
+      const errors = [];
+      if (!forgotPassword) {
+        if (foundEmail) errors.push("Email đã tồn tại");
+        if (foundPhoneNumber) errors.push("Số điện thoại đã tồn tại");
+      } else {
+        if (!foundEmail) errors.push("Email tài khoản không tồn tại");
+      }
+
+      if (errors.length > 0) {
+        return res.status(404).json({
+          message: "Gửi mã xác nhận thất bại",
+          error: errors.join(", "),
+        });
+      }
+
+      // Tạo và gửi mã xác nhận
+      const verificationCode = generateVerificationCode();
+      storedVerificationCode = verificationCode;
+      await sendVerificationEmail(email, verificationCode.code);
+
+      return res.send({
+        message: "Mã xác nhận đã được gửi đến địa chỉ email thành công",
+        payload: verificationCode,
+      });
+    } catch (error) {
+      console.error("Error during verification:", error);
+      return res
+        .status(500)
+        .json({ message: "Gửi mã xác nhận thất bại", error });
+    }
+  },
+
   getMe: async (req, res, next) => {
     try {
       return res.status(200).json({

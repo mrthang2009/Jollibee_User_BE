@@ -45,20 +45,11 @@ const registerSchema = yup.object({
           return phoneRegex.test(value);
         }
       ),
+    enteredCode: yup.string().required("enteredCode: cannot be blank").max(6),
   }),
 });
-const verifySchema = yup.object({
+const sendCodeSchema = yup.object({
   body: yup.object({
-    firstName: yup
-      .string()
-      .required("firstName: cannot be blank")
-      .max(50, "firstName: cannot exceed 50 characters"),
-
-    lastName: yup
-      .string()
-      .required("lastName: cannot be blank")
-      .max(50, "lastName: cannot exceed 50 characters"),
-
     email: yup
       .string()
       .required("email: cannot be blank")
@@ -66,22 +57,9 @@ const verifySchema = yup.object({
         const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
         return emailRegex.test(value);
       }),
-
-    password: yup
-      .string()
-      .required("password: cannot be blank")
-      .test("password type", "password: is not a valid password!", (value) => {
-        const passwordRegex =
-          /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-
-        return passwordRegex.test(value);
-      })
-      .min(8)
-      .max(20),
-
     phoneNumber: yup
       .string()
-      .required("phoneNumber: cannot be blank")
+      // .required("phoneNumber: cannot be blank")
       .test(
         "phoneNumber type",
         "phoneNumber: is not a valid phoneNumber!",
@@ -92,7 +70,9 @@ const verifySchema = yup.object({
           return phoneRegex.test(value);
         }
       ),
-    enteredCode: yup.string().required("enteredCode: cannot be blank").max(6),
+    forgotPassword: yup
+      .boolean()
+      .required("forgotPassword: must have a status"),
   }),
 });
 const loginSchema = yup.object({
@@ -121,7 +101,7 @@ const loginSchema = yup.object({
 });
 
 module.exports = {
+  sendCodeSchema,
   registerSchema,
   loginSchema,
-  verifySchema,
 };
