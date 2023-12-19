@@ -57,19 +57,22 @@ const sendCodeSchema = yup.object({
         const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
         return emailRegex.test(value);
       }),
-    phoneNumber: yup
-      .string()
-      // .required("phoneNumber: cannot be blank")
-      .test(
-        "phoneNumber type",
-        "phoneNumber: is not a valid phoneNumber!",
-        (value) => {
-          const phoneRegex =
-            /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/;
+    phoneNumber: yup.string().when("body.forgotPassword", {
+      is: false,
+      then: yup
+        .string()
+        .required("phoneNumber: cannot be blank")
+        .test(
+          "phoneNumber type",
+          "phoneNumber: is not a valid phoneNumber!",
+          (value) => {
+            const phoneRegex =
+              /^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/;
 
-          return phoneRegex.test(value);
-        }
-      ),
+            return phoneRegex.test(value);
+          }
+        ),
+    }),
     forgotPassword: yup
       .boolean()
       .required("forgotPassword: must have a status"),
