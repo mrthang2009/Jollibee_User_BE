@@ -7,10 +7,11 @@ const { validateSchema } = require("../../utils");
 const {
   loginSchema,
   registerSchema,
+  forgotSchema,
   sendCodeSchema,
 } = require("./validation");
 
-const { login, register, getMe, sendCode } = require("./controller");
+const { login, register, forgotPassword, getMe, sendCode } = require("./controller");
 
 router
   .route("/login")
@@ -21,7 +22,7 @@ router
   );
 router.route("/send-code").post(validateSchema(sendCodeSchema), sendCode);
 router.route("/register").post(validateSchema(registerSchema), register);
-
+router.route("/forgot-password").post(validateSchema(forgotSchema), forgotPassword);
 router
   .route("/profile")
   .get(passport.authenticate("jwt", { session: false }), getMe);
