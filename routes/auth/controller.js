@@ -154,7 +154,38 @@ module.exports = {
         .json({ message: "Gửi mã xác nhận thất bại", error });
     }
   },
+  forgotPassword: async (req, res, next) => {
+    try {
+      const { email, newPassword, confirmPassword } = req.body;
+      if (newPassword !== confirmPassword) {
+        return res.status(404).json({
+          message: "confirmPassWord and newPassword not match",
+        });
+      }
+      const updateCustomer = await Customer.findOneAndUpdate(
+        { email: email, isDeleted: false },
+        {
+          password: newPassword,
+        },
+        { new: true }
+      );
 
+      if (!updateCustomer) {
+        return res.status(410).json({
+          message: "Change password information of customer not found",
+        });
+      }
+      return res.status(200).json({
+        message: "Change password information of customer successfully",
+        payload: updateCustomer,
+      });
+    } catch (err) {
+      return res.send(404, {
+        message: "Change password information of customer failed",
+        error: err,
+      });
+    }
+  },
   getMe: async (req, res, next) => {
     try {
       return res.status(200).json({
