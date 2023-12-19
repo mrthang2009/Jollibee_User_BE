@@ -24,7 +24,7 @@ const generateRefreshToken = (id) => {
 // Logic tạo mã xác thực của bạn ở đây
 const generateVerificationCode = () => {
   const createdAt = new Date();
-  const expiresIn = 5 * 60 * 1000;
+  const expiresIn = 3 * 60 * 1000;
   const expirationTime = createdAt.getTime() + expiresIn;
 
   return {
@@ -45,12 +45,13 @@ const sendVerificationEmail = async (email, verificationCode) => {
       },
     });
     // Tính thời gian hiệu lực của mã xác thực (10 phút)
-    const expiresInMinutes = 5;
+    const expiresInMinutes = 3;
 
     // Tạo đoạn mã HTML cho email
     const emailHTML = `
       <p>Mã xác thực của bạn là: <strong>${verificationCode}</strong></p>
       <p>Mã xác thực này có hiệu lực trong vòng ${expiresInMinutes} phút.</p>
+      <p>Vui lòng không chia sẻ mã này với người khác.</p>
     `;
 
     const mailOptions = {
