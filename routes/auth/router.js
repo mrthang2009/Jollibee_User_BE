@@ -9,7 +9,6 @@ const {
   registerSchema,
   forgotSchema,
   sendCodeSchema,
-  refreshToken,
 } = require("./validation");
 
 const {
@@ -18,6 +17,7 @@ const {
   forgotPassword,
   getMe,
   sendCode,
+  refreshToken,
 } = require("./controller");
 
 router
