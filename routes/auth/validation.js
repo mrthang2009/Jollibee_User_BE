@@ -112,7 +112,6 @@ const forgotSchema = yup.object({
     enteredCode: yup.string().required("enteredCode: cannot be blank").max(6),
   }),
 });
-
 const loginSchema = yup.object({
   body: yup.object({
     email: yup
