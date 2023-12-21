@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const jwtSettings = require("../constants/jwtSetting");
 
 const generateToken = (user) => {
-  const expiresIn = "1d";
+  const expiresIn = "12h";
   return JWT.sign(
     {
       iat: Math.floor(Date.now() / 1000),
